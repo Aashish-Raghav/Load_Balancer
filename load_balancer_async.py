@@ -8,7 +8,8 @@ import requests
 import aiohttp
 
 # define host and port
-HOST = "127.0.0.1"  # local host, server listens only on the loopback interface.
+# local host, server listens only on the loopback interface.
+HOST = "127.0.0.1"
 PORT_LB = 65433
 
 curr_index = 0
@@ -23,6 +24,11 @@ async def load_balancer():
 
     async with lb:
         await lb.serve_forever()
+
+
+def check_status_code(backend_response):
+    status_line = backend_response.split(b"\r\n")[0]
+    return int(status_line.split()[1])
 
 
 # these reader and writer are high level, built on socket internally
@@ -52,22 +58,66 @@ async def handle_client(reader, writer):
         port = int(port)
         print(f"Request routed to server {host}:{port}")
 
-        try:
-            reader_backend, writer_backend = await asyncio.open_connection(host, port)
-            writer_backend.write(request)
-            await writer_backend.drain()
+        # Retry mechanism
+        backoff = args.backoff
+        for attempt in range(args.retries):
+            try:
+                reader_backend, writer_backend = await asyncio.open_connection(
+                    host, port
+                )
+                writer_backend.write(request)
+                await writer_backend.drain()
 
-            # Response from backend
-            while True:
-                backend_response = await reader_backend.read(4096)
-                if not backend_response:
-                    break
+                # Response from backend
+                backend_response = await asyncio.wait_for(
+                    reader_backend.read(4096), timeout=2
+                )
 
-                writer.write(backend_response)
-                await writer.drain()
-        except Exception as e:
-            print(f"Failed to connect to {host}:{port} - {e}")
-    except:
+                # check for status code = 200
+                status_code = check_status_code(backend_response)
+                if status_code != 200:
+                    raise Exception(
+                        f"Received HTTP {status_code} response from backend"
+                    )
+
+                # read remaining response from backend
+                while backend_response:
+                    writer.write(backend_response)
+                    await writer.drain()
+
+                    backend_response = await asyncio.wait_for(
+                        reader_backend.read(4096), timeout=2
+                    )
+                break
+
+            except asyncio.TimeoutError:
+                if attempt < args.retries - 1:
+                    print(
+                        f"Attempt {attempt + 1} failed to connect to {host}:{port} - Timeout error"
+                    )
+                else:
+                    print(
+                        f"Failed to connect to {host}:{port} after {args.retries} attempts."
+                    )
+                    writer.close()
+                    await writer.wait_closed()
+
+            except Exception as e:
+                if attempt < args.retries - 1:
+                    print(
+                        f"Attempt {attempt + 1} failed to connect to {host}:{port} - {e}"
+                    )
+                else:
+                    print(
+                        f"Failed to connect to {host}:{port} after {args.retries} attempts."
+                    )
+                    writer.close()
+                    await writer.wait_closed()
+
+            await asyncio.sleep(backoff)
+            backoff = backoff * args.exponential_factor
+
+    except Exception as e:
         print(f"Error Handling Client: {e}")
     finally:
         writer.close()
@@ -101,6 +151,7 @@ async def server_health_check(servers, interval):
 
 
 async def main():
+    print(args)
     # Start the health check task
     task1 = asyncio.create_task(server_health_check(args.servers, args.interval))
 
@@ -123,6 +174,26 @@ if __name__ == "__main__":
         type=int,
         help="interval in seconds after which check servers health",
     )
+    parser.add_argument(
+        "-r",
+        "--retries",
+        default=4,
+        type=int,
+        help="Number of request retries to server",
+    )
+    parser.add_argument(
+        "-b",
+        "--backoff",
+        default=0.5,
+        type=int,
+        help="Initial backoff time after request failure",
+    )
+    parser.add_argument(
+        "-e",
+        "--exponential-factor",
+        default=1.5,
+        type=int,
+        help="Exponential Factor to backoff time",
+    )
     args = parser.parse_args()
-
     asyncio.run(main())
