@@ -50,4 +50,28 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     shared_state.set_args(args)
+    for entry in args.servers:
+        try:
+            parts = entry.split(":")
+
+            if len(parts) == 3:  # Format: host:port:weight
+                server = f"{parts[0]}:{parts[1]}"
+                weight = int(parts[2])  # Ensure weight is an integer
+            elif len(parts) == 2:  # Format: host:port (no weight provided)
+                server = f"{parts[0]}:{parts[1]}"
+                weight = 1  # Default weight
+            else:
+                raise ValueError(
+                    f"Invalid server format: {entry}. Use host:port or host:port:weight."
+                )
+
+            shared_state.add_server(server, weight)
+
+        except ValueError as ve:
+            print(f"Error parsing server entry '{entry}': {ve}. Skipping this server.")
+        except Exception as e:
+            print(
+                f"Unexpected error while parsing '{entry}': {e}. Skipping this server."
+            )
+
     asyncio.run(main())

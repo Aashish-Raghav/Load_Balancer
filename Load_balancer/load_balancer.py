@@ -1,8 +1,6 @@
 import asyncio
 from shared_state import shared_state
-from routing_algorithms import round_robin
-
-curr_index = 0
+from routing_algorithms import round_robin, weighted_round_robin
 
 
 async def load_balancer():
@@ -14,7 +12,6 @@ async def load_balancer():
 
 
 async def handle_client(reader, writer):
-    global curr_index
     args = shared_state.get_args()
     try:
         request = await reader.read(4096)
@@ -32,7 +29,10 @@ async def handle_client(reader, writer):
                 return
 
             # Round Robin routing
-            server = round_robin()
+            # server = round_robin()
+
+            # Weighted Round Robin routing
+            server = weighted_round_robin()
 
         host, port = server.split(":")
         port = int(port)

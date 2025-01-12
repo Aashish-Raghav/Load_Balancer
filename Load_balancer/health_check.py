@@ -11,7 +11,7 @@ def add_protocol(server):
 
 async def server_health_check():
     args = shared_state.get_args()
-    servers = args.servers
+    servers = shared_state.get_servers_list()
     interval = args.interval
 
     while True:
