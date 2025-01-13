@@ -22,17 +22,17 @@ async def handle_client(reader, writer):
         print(f"Request from {client_address[0]}:{client_address[1]}")
 
         async with shared_state.servers_lock:
-            if not shared_state.healthy_servers:
-                print("No healthy server")
-                writer.close()
-                await writer.wait_closed()
-                return
-
             # Round Robin routing
             # server = round_robin()
 
             # Weighted Round Robin routing
             server = weighted_round_robin()
+
+            if not server:
+                print("No healthy server")
+                writer.close()
+                await writer.wait_closed()
+                return
 
         host, port = server.split(":")
         port = int(port)

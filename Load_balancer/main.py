@@ -64,7 +64,6 @@ if __name__ == "__main__":
                 raise ValueError(
                     f"Invalid server format: {entry}. Use host:port or host:port:weight."
                 )
-
             shared_state.add_server(server, weight)
 
         except ValueError as ve:
