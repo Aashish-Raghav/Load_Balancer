@@ -64,10 +64,10 @@ async def least_connection_request_sent():
         shared_state.servers_conn[server[1]] = server[0] + 1
         shared_state.least_conn_queue.add((server[0] + 1, server[1]))
 
-        print(f"list during request")
-        for i in shared_state.least_conn_queue:
-            print(i, end=" ")
-        print("\n")
+        # print(f"list during request")
+        # for i in shared_state.least_conn_queue:
+        #     print(i, end=" ")
+        # print("\n")
 
         return server[1]
 
@@ -83,8 +83,8 @@ async def least_connection_response_received(server):
             shared_state.least_conn_queue.add(
                 (shared_state.servers_conn[server], server)
             )
-    async with shared_state.queue_lock:
-        print(f"list after response {server}")
-        for i in shared_state.least_conn_queue:
-            print(i, end=" ")
-        print("\n")
+    # async with shared_state.queue_lock:
+    #     print(f"list after response {server}")
+    #     for i in shared_state.least_conn_queue:
+    #         print(i, end=" ")
+    #     print("\n")

@@ -54,8 +54,17 @@ if __name__ == "__main__":
         type=int,
         help="Timeout to wait for response",
     )
+    parser.add_argument(
+        "-a",
+        "--routing-algorithm",
+        type=str,
+        choices=["round_robin", "weighted_round_robin", "least_connection"],
+        default="round_robin",
+        help="Specify the routing algorithm to use: round_robin, weighted_round_robin, or least_connection (default: round_robin)",
+    )
 
     args = parser.parse_args()
+    print(args.routing_algorithm)
     shared_state.set_args(args)
     for entry in args.servers:
         try:

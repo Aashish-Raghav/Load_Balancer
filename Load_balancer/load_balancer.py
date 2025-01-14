@@ -28,15 +28,15 @@ async def handle_client(reader, writer):
         print(f"Request from {client_address[0]}:{client_address[1]}")
 
         async with shared_state.servers_lock:
-            # Round Robin routing
-            # server = round_robin()
-
-            # Weighted Round Robin routing
-            # server = weighted_round_robin()
-
-            # Least connection routing
-            server = await least_connection_request_sent()
-
+            # routing algorithm
+            if args.routing_algorithm == "round_robin":
+                server = round_robin()
+            elif args.routing_algorithm == "weighted_round_robin":
+                server = weighted_round_robin()
+            elif args.routing_algorithm == "least_connection":
+                server = await least_connection_request_sent()
+            else:
+                raise ValueError(f"Invalid algorithm {server.routing_algorithm}.")
             if not server:
                 print("No healthy server")
                 writer.close()
@@ -87,8 +87,8 @@ async def forward_request_to_backend(server, request, writer, args):
                 backend_response = await asyncio.wait_for(
                     reader_backend.read(), timeout=args.timeout
                 )
-
-            await least_connection_response_received(server)
+            if args.routing_algorithm == "least_connection":
+                await least_connection_response_received(server)
             break  # Successful response, exit retry loop
 
         except asyncio.TimeoutError:
