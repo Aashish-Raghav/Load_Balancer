@@ -1,6 +1,11 @@
 import asyncio
 from shared_state import shared_state
-from routing_algorithms import round_robin, weighted_round_robin
+from routing_algorithms import (
+    round_robin,
+    weighted_round_robin,
+    least_connection_request_sent,
+    least_connection_response_received,
+)
 
 
 async def load_balancer():
@@ -13,6 +18,7 @@ async def load_balancer():
 
 async def handle_client(reader, writer):
     args = shared_state.get_args()
+    # pdb.set_trace()
     try:
         request = await reader.read(4096)
         if not request:
@@ -26,7 +32,10 @@ async def handle_client(reader, writer):
             # server = round_robin()
 
             # Weighted Round Robin routing
-            server = weighted_round_robin()
+            # server = weighted_round_robin()
+
+            # Least connection routing
+            server = await least_connection_request_sent()
 
             if not server:
                 print("No healthy server")
@@ -34,11 +43,8 @@ async def handle_client(reader, writer):
                 await writer.wait_closed()
                 return
 
-        host, port = server.split(":")
-        port = int(port)
-        print(f"Request routed to server {host}:{port}")
-
-        await forward_request_to_backend(host, port, request, writer, args)
+        print(f"Request routed to server {server}")
+        await forward_request_to_backend(server, request, writer, args)
 
     except Exception as e:
         print(f"Error Handling Client: {e}")
@@ -53,7 +59,9 @@ def check_status_code(backend_response):
 
 
 # retry Mechanism
-async def forward_request_to_backend(host, port, request, writer, args):
+async def forward_request_to_backend(server, request, writer, args):
+    host, port = server.split(":")
+    port = int(port)
     backoff = args.backoff
     for attempt in range(args.retries):
         try:
@@ -64,7 +72,7 @@ async def forward_request_to_backend(host, port, request, writer, args):
 
             # Response from backend
             backend_response = await asyncio.wait_for(
-                reader_backend.read(4096), timeout=2
+                reader_backend.read(), timeout=args.timeout
             )
 
             # check for status code = 200
@@ -77,9 +85,10 @@ async def forward_request_to_backend(host, port, request, writer, args):
                 writer.write(backend_response)
                 await writer.drain()
                 backend_response = await asyncio.wait_for(
-                    reader_backend.read(4096), timeout=2
+                    reader_backend.read(), timeout=args.timeout
                 )
 
+            await least_connection_response_received(server)
             break  # Successful response, exit retry loop
 
         except asyncio.TimeoutError:

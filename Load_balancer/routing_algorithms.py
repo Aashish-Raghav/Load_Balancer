@@ -51,3 +51,40 @@ def weighted_round_robin():
                 break
 
     return curr_server
+
+
+async def least_connection_request_sent():
+    async with shared_state.queue_lock:
+        if len(shared_state.least_conn_queue) == 0:
+            return None
+        # least connected server
+        server = shared_state.least_conn_queue[0]
+        shared_state.least_conn_queue.discard(server)
+        # increase connection by 1
+        shared_state.servers_conn[server[1]] = server[0] + 1
+        shared_state.least_conn_queue.add((server[0] + 1, server[1]))
+
+        print(f"list during request")
+        for i in shared_state.least_conn_queue:
+            print(i, end=" ")
+        print("\n")
+
+        return server[1]
+
+
+async def least_connection_response_received(server):
+    # decrement connection count by 1
+    async with shared_state.queue_lock:
+        if (shared_state.servers_conn[server], server) in shared_state.least_conn_queue:
+            shared_state.least_conn_queue.discard(
+                (shared_state.servers_conn[server], server)
+            )
+            shared_state.servers_conn[server] = shared_state.servers_conn[server] - 1
+            shared_state.least_conn_queue.add(
+                (shared_state.servers_conn[server], server)
+            )
+    async with shared_state.queue_lock:
+        print(f"list after response {server}")
+        for i in shared_state.least_conn_queue:
+            print(i, end=" ")
+        print("\n")

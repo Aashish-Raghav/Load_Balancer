@@ -7,9 +7,10 @@ Step4: Add Asynchronous programming in place of multi-threading
 Step5: Add retry Mechanism to avoid slow, internal, intermittent error etc... in server request or response
 
 
-Step6: Modularize load balancer in different modules
-Step7: Add weighted Round Robin algorithm
-Step8: Replaced the array-based healthy server tracking with a dictionary-based approach.
+Step6: Modularize load balancer in different modules  
+Step7: Add weighted Round Robin algorithm  
+Step8: Replaced the array-based healthy server tracking with a dictionary-based approach.  
+Step9: Add least connection algorithm  
 
 Justification:  
 The primary tasks involve handling network I/O, such as *forwarding requests and checking server health* , **asynchronous programming** allows efficient handling of many concurrent connections with **minimal overhead**. Since creating a new thread for each connection in a **multithreaded** approach would increase memory consumption and limit scalability, asynchronous programming is better suited for scenarios involving high I/O-bound concurrency. Additionally, this approach mirrors how real-world load balancers like Nginx handle concurrency, making it a more realistic and modern solution."

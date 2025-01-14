@@ -20,7 +20,7 @@ if __name__ == "__main__":
         "-s", "--servers", nargs="+", required=True, help="backend servers"
     )
     parser.add_argument(
-        "-t",
+        "-i",
         "--interval",
         default=5,
         type=int,
@@ -46,6 +46,13 @@ if __name__ == "__main__":
         default=1.5,
         type=float,
         help="Exponential Factor to backoff time",
+    )
+    parser.add_argument(
+        "-t",
+        "--timeout",
+        default=2,
+        type=int,
+        help="Timeout to wait for response",
     )
 
     args = parser.parse_args()
