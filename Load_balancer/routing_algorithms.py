@@ -1,3 +1,4 @@
+import logging
 from shared_state import shared_state
 
 curr_index = 0
@@ -6,6 +7,7 @@ curr_server = None
 
 
 def round_robin():
+    logging.info(f"round robin routing algorithm ")
     global curr_index, curr_server
     start = curr_index
     while True:
@@ -25,6 +27,7 @@ def round_robin():
 
 
 def weighted_round_robin():
+    logging.info(f"weighted round robin routing algorithm ")
     global curr_index, curr_weight, curr_server
     start = curr_index
     # checking last server
@@ -54,6 +57,7 @@ def weighted_round_robin():
 
 
 async def least_connection_request_sent():
+    logging.info(f"Least connection routing algorithm ")
     async with shared_state.queue_lock:
         if len(shared_state.least_conn_queue) == 0:
             return None
@@ -63,11 +67,6 @@ async def least_connection_request_sent():
         # increase connection by 1
         shared_state.servers_conn[server[1]] = server[0] + 1
         shared_state.least_conn_queue.add((server[0] + 1, server[1]))
-
-        # print(f"list during request")
-        # for i in shared_state.least_conn_queue:
-        #     print(i, end=" ")
-        # print("\n")
 
         return server[1]
 
@@ -83,14 +82,10 @@ async def least_connection_response_received(server):
             shared_state.least_conn_queue.add(
                 (shared_state.servers_conn[server], server)
             )
-    # async with shared_state.queue_lock:
-    #     print(f"list after response {server}")
-    #     for i in shared_state.least_conn_queue:
-    #         print(i, end=" ")
-    #     print("\n")
 
 
 async def consistent_hashing(client):
+    logging.info(f"Consistent hashing routing algorithm ")
     hash = shared_state.get_hash(client)
     index = shared_state.sortedKeys.bisect_left(hash)
 

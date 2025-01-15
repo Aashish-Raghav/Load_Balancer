@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from shared_state import shared_state
 from routing_algorithms import (
     round_robin,
@@ -11,7 +12,7 @@ from routing_algorithms import (
 
 async def load_balancer():
     lb = await asyncio.start_server(handle_client, "127.0.0.1", 65433)
-    print(f"Server started. Listening on 127.0.0.1:65433")
+    logging.info(f"Server started. Listening on 127.0.0.1:65433")
 
     async with lb:
         await lb.serve_forever()
@@ -19,14 +20,13 @@ async def load_balancer():
 
 async def handle_client(reader, writer):
     args = shared_state.get_args()
-    # pdb.set_trace()
     try:
         request = await reader.read(4096)
         if not request:
             return
 
         client_address = writer.get_extra_info("peername")
-        print(f"Request from {client_address[0]}:{client_address[1]}")
+        logging.info(f"Request from {client_address[0]}:{client_address[1]}")
 
         async with shared_state.servers_lock:
             # routing algorithm
@@ -43,16 +43,16 @@ async def handle_client(reader, writer):
             else:
                 raise ValueError(f"Invalid algorithm {server.routing_algorithm}.")
             if not server:
-                print("No healthy server")
+                logging.error("No healthy server")
                 writer.close()
                 await writer.wait_closed()
                 return
 
-        print(f"Request routed to server {server}")
+        logging.info(f"Request routed to server {server}")
         await forward_request_to_backend(server, request, writer, args)
 
     except Exception as e:
-        print(f"Error Handling Client: {e}")
+        logging.error(f"Error Handling Client: {e}")
     finally:
         writer.close()
         await writer.wait_closed()
@@ -65,6 +65,7 @@ def check_status_code(backend_response):
 
 # retry Mechanism
 async def forward_request_to_backend(server, request, writer, args):
+    logging.debug(f"Attempting to forward request to {server}")
     host, port = server.split(":")
     port = int(port)
     backoff = args.backoff
@@ -74,6 +75,7 @@ async def forward_request_to_backend(server, request, writer, args):
             reader_backend, writer_backend = await asyncio.open_connection(host, port)
             writer_backend.write(request)
             await writer_backend.drain()
+            logging.info(f"Request forwarded to {server} successfully")
 
             # Response from backend
             backend_response = await asyncio.wait_for(
@@ -94,15 +96,18 @@ async def forward_request_to_backend(server, request, writer, args):
                 )
             if args.routing_algorithm == "least_connection":
                 await least_connection_response_received(server)
+            logging.info(f"Successful response from {server}")
             break  # Successful response, exit retry loop
 
         except asyncio.TimeoutError:
-            print(
+            logging.error(
                 f"Attempt {attempt + 1} failed to connect to {host}:{port} - Timeout error"
             )
 
         except Exception as e:
-            print(f"Attempt {attempt + 1} failed to connect to {host}:{port} - {e}")
+            logging.error(
+                f"Attempt {attempt + 1} failed to connect to {host}:{port} - {e}"
+            )
 
         await asyncio.sleep(backoff)
         backoff *= args.exponential_factor

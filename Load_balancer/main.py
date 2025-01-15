@@ -3,7 +3,14 @@ import argparse
 from health_check import server_health_check
 from load_balancer import load_balancer
 from api_server import start_api_server
+import logging
 from shared_state import shared_state
+
+logging.basicConfig(
+    filename="load_balancer.log",
+    level=logging.DEBUG,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
 
 
 async def main():
@@ -72,7 +79,6 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    print(args.routing_algorithm)
     shared_state.set_args(args)
     for entry in args.servers:
         try:
@@ -91,9 +97,11 @@ if __name__ == "__main__":
             shared_state.add_server(server, weight)
 
         except ValueError as ve:
-            print(f"Error parsing server entry '{entry}': {ve}. Skipping this server.")
+            logging.error(
+                f"Error parsing server entry '{entry}': {ve}. Skipping this server."
+            )
         except Exception as e:
-            print(
+            logging.error(
                 f"Unexpected error while parsing '{entry}': {e}. Skipping this server."
             )
 

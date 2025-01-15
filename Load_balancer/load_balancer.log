@@ -1,0 +1,77 @@
+2025-01-15 19:53:48,207 - asyncio - DEBUG - Using proactor: IocpProactor
+2025-01-15 19:53:48,208 - root - INFO - API server started on port 65432...
+2025-01-15 19:53:48,212 - root - INFO - Server started. Listening on 127.0.0.1:65433
+2025-01-15 19:53:48,243 - root - INFO - localhost:8080 status: 200
+2025-01-15 19:53:48,297 - root - INFO - localhost:8081 status: 200
+2025-01-15 19:53:54,731 - root - INFO - Request from 127.0.0.1:50712
+2025-01-15 19:53:54,732 - root - INFO - Consistent hashing routing algorithm 
+2025-01-15 19:53:54,732 - root - INFO - Request routed to server localhost:8080
+2025-01-15 19:53:54,732 - root - DEBUG - Attempting to forward request to localhost:8080
+2025-01-15 19:53:54,733 - root - INFO - Request forwarded to localhost:8080 successfully
+2025-01-15 19:53:54,736 - root - INFO - Successful response from localhost:8080
+2025-01-15 19:53:57,418 - root - INFO - Request from 127.0.0.1:50715
+2025-01-15 19:53:57,418 - root - INFO - Consistent hashing routing algorithm 
+2025-01-15 19:53:57,418 - root - INFO - Request routed to server localhost:8080
+2025-01-15 19:53:57,418 - root - DEBUG - Attempting to forward request to localhost:8080
+2025-01-15 19:53:57,422 - root - INFO - Request forwarded to localhost:8080 successfully
+2025-01-15 19:53:57,426 - root - INFO - Successful response from localhost:8080
+2025-01-15 19:53:58,298 - root - INFO - localhost:8080 status: 200
+2025-01-15 19:53:58,301 - root - INFO - localhost:8081 status: 200
+2025-01-15 19:53:59,809 - root - INFO - Request from 127.0.0.1:50723
+2025-01-15 19:53:59,809 - root - INFO - Consistent hashing routing algorithm 
+2025-01-15 19:53:59,809 - root - INFO - Request routed to server localhost:8080
+2025-01-15 19:53:59,809 - root - DEBUG - Attempting to forward request to localhost:8080
+2025-01-15 19:53:59,810 - root - INFO - Request forwarded to localhost:8080 successfully
+2025-01-15 19:53:59,813 - root - INFO - Successful response from localhost:8080
+2025-01-15 19:54:01,932 - root - INFO - Request from 127.0.0.1:50730
+2025-01-15 19:54:01,932 - root - INFO - Consistent hashing routing algorithm 
+2025-01-15 19:54:01,932 - root - INFO - Request routed to server localhost:8081
+2025-01-15 19:54:01,932 - root - DEBUG - Attempting to forward request to localhost:8081
+2025-01-15 19:54:01,933 - root - INFO - Request forwarded to localhost:8081 successfully
+2025-01-15 19:54:01,934 - root - INFO - Successful response from localhost:8081
+2025-01-15 19:54:08,328 - root - INFO - localhost:8080 status: 200
+2025-01-15 19:54:08,331 - root - INFO - localhost:8081 status: 200
+2025-01-15 19:54:18,346 - root - INFO - localhost:8080 status: 200
+2025-01-15 19:54:18,351 - root - INFO - localhost:8081 status: 200
+2025-01-15 19:54:28,357 - root - INFO - localhost:8080 status: 200
+2025-01-15 19:54:28,360 - root - INFO - localhost:8081 status: 200
+2025-01-15 19:54:38,375 - root - INFO - localhost:8080 status: 200
+2025-01-15 19:54:38,378 - root - INFO - localhost:8081 status: 200
+2025-01-15 19:54:39,969 - root - INFO - Adding server localhost:8082 to the load balancer
+2025-01-15 19:54:39,969 - aiohttp.access - INFO - 127.0.0.1 [15/Jan/2025:19:54:39 +0530] "POST /add_server HTTP/1.1" 200 215 "-" "PostmanRuntime/7.37.3"
+2025-01-15 19:54:42,353 - root - INFO - Adding server localhost:8082 to the load balancer
+2025-01-15 19:54:42,353 - aiohttp.access - INFO - 127.0.0.1 [15/Jan/2025:19:54:42 +0530] "POST /add_server HTTP/1.1" 200 209 "-" "PostmanRuntime/7.37.3"
+2025-01-15 19:54:48,389 - root - INFO - localhost:8080 status: 200
+2025-01-15 19:54:48,392 - root - INFO - localhost:8081 status: 200
+2025-01-15 19:54:58,405 - root - INFO - localhost:8080 status: 200
+2025-01-15 19:54:58,408 - root - INFO - localhost:8081 status: 200
+2025-01-15 19:55:08,417 - root - INFO - localhost:8080 status: 200
+2025-01-15 19:55:08,420 - root - INFO - localhost:8081 status: 200
+2025-01-15 19:55:09,722 - root - INFO - Request from 127.0.0.1:50832
+2025-01-15 19:55:09,722 - root - INFO - Consistent hashing routing algorithm 
+2025-01-15 19:55:09,722 - root - INFO - Request routed to server localhost:8081
+2025-01-15 19:55:09,723 - root - DEBUG - Attempting to forward request to localhost:8081
+2025-01-15 19:55:09,724 - root - INFO - Request forwarded to localhost:8081 successfully
+2025-01-15 19:55:09,726 - root - INFO - Successful response from localhost:8081
+2025-01-15 19:55:10,821 - root - INFO - Request from 127.0.0.1:50835
+2025-01-15 19:55:10,821 - root - INFO - Consistent hashing routing algorithm 
+2025-01-15 19:55:10,821 - root - INFO - Request routed to server localhost:8080
+2025-01-15 19:55:10,821 - root - DEBUG - Attempting to forward request to localhost:8080
+2025-01-15 19:55:10,822 - root - INFO - Request forwarded to localhost:8080 successfully
+2025-01-15 19:55:10,826 - root - INFO - Successful response from localhost:8080
+2025-01-15 19:55:11,726 - root - INFO - Request from 127.0.0.1:50838
+2025-01-15 19:55:11,726 - root - INFO - Consistent hashing routing algorithm 
+2025-01-15 19:55:11,726 - root - INFO - Request routed to server localhost:8082
+2025-01-15 19:55:11,726 - root - DEBUG - Attempting to forward request to localhost:8082
+2025-01-15 19:55:11,728 - root - INFO - Request forwarded to localhost:8082 successfully
+2025-01-15 19:55:11,807 - root - INFO - Successful response from localhost:8082
+2025-01-15 19:55:12,802 - root - INFO - Request from 127.0.0.1:50841
+2025-01-15 19:55:12,802 - root - INFO - Consistent hashing routing algorithm 
+2025-01-15 19:55:12,802 - root - INFO - Request routed to server localhost:8081
+2025-01-15 19:55:12,802 - root - DEBUG - Attempting to forward request to localhost:8081
+2025-01-15 19:55:12,804 - root - INFO - Request forwarded to localhost:8081 successfully
+2025-01-15 19:55:12,807 - root - INFO - Successful response from localhost:8081
+2025-01-15 19:55:18,430 - root - INFO - localhost:8080 status: 200
+2025-01-15 19:55:18,432 - root - INFO - localhost:8081 status: 200
+2025-01-15 19:55:28,444 - root - INFO - localhost:8080 status: 200
+2025-01-15 19:55:28,447 - root - INFO - localhost:8081 status: 200

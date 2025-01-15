@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from aiohttp import web
 from shared_state import shared_state
 from routing_algorithms import consistent_hashing
@@ -19,6 +20,7 @@ async def add_server_handler(request):
     server = data.get("server")
     if not server:
         return web.json_response({"error": "Server address is required"}, status=400)
+    logging.info(f"Adding server {server} to the load balancer")
 
     response = await shared_state.add_server_consistent_hashing(server, 3)
     return web.json_response(response)
@@ -29,6 +31,8 @@ async def remove_server_handler(request):
     server = data.get("server")
     if not server:
         return web.json_response({"error": "Server address is required"}, status=400)
+    logging.info(f"Removing server {server} from the load balancer")
+
     response = await shared_state.remove_server_consistent_hashing(server, 3)
     return web.json_response(response)
 
@@ -37,6 +41,8 @@ async def get_server_handler(request):
     key = request.query.get("key")
     if not key:
         return web.json_response({"error": "Client address is required"}, status=400)
+    logging.info(f"Getting server for {key} from the load balancer")
+
     server = await consistent_hashing(key)
     return web.json_response({"server": server})
 
@@ -51,6 +57,5 @@ async def start_api_server():
     runner = web.AppRunner(app)
     await runner.setup()
     site = web.TCPSite(runner, "127.0.0.1", 65432)
-    print("API server started on port 65432...")
+    logging.info("API server started on port 65432...")
     await site.start()
-    print("Site started")

@@ -1,5 +1,6 @@
 import asyncio
 import aiohttp
+import logging
 from shared_state import shared_state
 
 
@@ -27,7 +28,7 @@ async def server_health_check():
                             add_protocol(server, args), timeout=args.timeout
                         ) as response:
                             assert response.status == 200
-                            print(f"{server} status: 200")
+                            logging.info(f"{server} status: 200")
 
                             if args.routing_algorithm == "least_connection":
                                 # if server become healhty add it to conn_pool
@@ -36,9 +37,7 @@ async def server_health_check():
                                         shared_state.least_conn_queue.add((0, server))
 
                             elif args.routing_algorithm == "consistent_hashing":
-                                await shared_state.add_server_consistent_hashing(
-                                    server, 3
-                                )
+                                await shared_state.add_server_consistent_hashing(server)
 
                             shared_state.servers_health[server] = True
 
@@ -52,15 +51,9 @@ async def server_health_check():
                                     )
 
                         elif args.routing_algorithm == "consistent_hashing":
-                            await shared_state.remove_server_consistent_hashing(
-                                server, 3
-                            )
+                            await shared_state.remove_server_consistent_hashing(server)
 
                         shared_state.servers_health[server] = False
-                        print(f"{server} is unreachable")
-        # async with shared_state.queue_lock:
-        #     print(f"list during request")
-        #     for i in shared_state.least_conn_queue:
-        #         print(i, end=" ")
-        #     print("\n")
+                        logging.info(f"{server} is unreachable")
+
         await asyncio.sleep(interval)
