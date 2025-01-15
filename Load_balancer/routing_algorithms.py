@@ -88,3 +88,13 @@ async def least_connection_response_received(server):
     #     for i in shared_state.least_conn_queue:
     #         print(i, end=" ")
     #     print("\n")
+
+
+async def consistent_hashing(client):
+    hash = shared_state.get_hash(client)
+    index = shared_state.sortedKeys.bisect_left(hash)
+
+    if index < len(shared_state.sortedKeys):
+        return shared_state.ring[shared_state.sortedKeys[index]]
+    else:
+        return shared_state.ring[shared_state.sortedKeys[0]]

@@ -35,6 +35,11 @@ async def server_health_check():
                                     if shared_state.servers_health[server] == False:
                                         shared_state.least_conn_queue.add((0, server))
 
+                            elif args.routing_algorithm == "consistent_hashing":
+                                await shared_state.add_server_consistent_hashing(
+                                    server, 3
+                                )
+
                             shared_state.servers_health[server] = True
 
                     except Exception:
@@ -45,6 +50,11 @@ async def server_health_check():
                                     shared_state.least_conn_queue.remove(
                                         (shared_state.servers_conn[server], server)
                                     )
+
+                        elif args.routing_algorithm == "consistent_hashing":
+                            await shared_state.remove_server_consistent_hashing(
+                                server, 3
+                            )
 
                         shared_state.servers_health[server] = False
                         print(f"{server} is unreachable")

@@ -5,6 +5,7 @@ from routing_algorithms import (
     weighted_round_robin,
     least_connection_request_sent,
     least_connection_response_received,
+    consistent_hashing,
 )
 
 
@@ -35,6 +36,10 @@ async def handle_client(reader, writer):
                 server = weighted_round_robin()
             elif args.routing_algorithm == "least_connection":
                 server = await least_connection_request_sent()
+            elif args.routing_algorithm == "consistent_hashing":
+                server = await consistent_hashing(
+                    f"{client_address[0]}:{client_address[1]}"
+                )
             else:
                 raise ValueError(f"Invalid algorithm {server.routing_algorithm}.")
             if not server:

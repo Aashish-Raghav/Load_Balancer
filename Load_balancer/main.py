@@ -58,9 +58,14 @@ if __name__ == "__main__":
         "-a",
         "--routing-algorithm",
         type=str,
-        choices=["round_robin", "weighted_round_robin", "least_connection"],
+        choices=[
+            "round_robin",
+            "weighted_round_robin",
+            "least_connection",
+            "consistent_hashing",
+        ],
         default="round_robin",
-        help="Specify the routing algorithm to use: round_robin, weighted_round_robin, or least_connection (default: round_robin)",
+        help="Specify the routing algorithm to use: round_robin, weighted_round_robin, least_connection or consistent_hashing (default: round_robin)",
     )
 
     args = parser.parse_args()
