@@ -11,6 +11,8 @@ Step6: Modularize load balancer in different modules
 Step7: Add weighted Round Robin algorithm  
 Step8: Replaced the array-based healthy server tracking with a dictionary-based approach.  
 Step9: Add least connection algorithm  
+Step10: Add consistent hashing algorithm, API endpoints to add and remove server on server ring in real time without restarting the load balancer  
+
 
 Justification:  
 The primary tasks involve handling network I/O, such as *forwarding requests and checking server health* , **asynchronous programming** allows efficient handling of many concurrent connections with **minimal overhead**. Since creating a new thread for each connection in a **multithreaded** approach would increase memory consumption and limit scalability, asynchronous programming is better suited for scenarios involving high I/O-bound concurrency. Additionally, this approach mirrors how real-world load balancers like Nginx handle concurrency, making it a more realistic and modern solution."

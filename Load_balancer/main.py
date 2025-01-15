@@ -2,6 +2,7 @@ import asyncio
 import argparse
 from health_check import server_health_check
 from load_balancer import load_balancer
+from api_server import start_api_server
 from shared_state import shared_state
 
 
@@ -9,9 +10,11 @@ async def main():
     # Start health check and load balancer tasks
     task1 = asyncio.create_task(server_health_check())
     task2 = asyncio.create_task(load_balancer())
+    task3 = asyncio.create_task(start_api_server())
 
     await task1
     await task2
+    await task3
 
 
 if __name__ == "__main__":
