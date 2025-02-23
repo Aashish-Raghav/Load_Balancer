@@ -67,13 +67,13 @@ The primary tasks of this load balancer involve handling network I/O, such as fo
 ### Installation  
 ```bash
 git clone https://github.com/Aashish-Raghav/Load_Balancer.git
-cd Load_balancer
 pip install -r requirements.txt
 ```
 
 ## Usage  
 To get the load balancer usage, use the following command:  
 ```bash
+cd Load_balancer
 python main.py --help
 ```
 
